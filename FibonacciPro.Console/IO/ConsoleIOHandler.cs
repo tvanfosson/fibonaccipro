@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FibonacciPro.ConsoleApplication.IO
 {
@@ -24,15 +22,9 @@ namespace FibonacciPro.ConsoleApplication.IO
             return result;
         }
 
-        public void Write(BigInteger[] results)
+        public void Write(IEnumerable<BigInteger> results)
         {
-            for (var i=0; i< results.Length; i++)
-            {
-                Console.Write(
-                    string.Format("{0}{1}", results[i].ToString("R0"), i < results.Length - 1 ? " " : string.Empty)
-                    );
-                
-            }
+            Console.Write(string.Join(" ", results.Select(r => r.ToString("R0"))));
         }
     }
 }

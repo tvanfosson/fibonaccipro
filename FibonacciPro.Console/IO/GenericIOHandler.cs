@@ -9,11 +9,11 @@ namespace FibonacciPro.ConsoleApplication.IO
 {
     public class GenericIOHandler : IInputHandler, IOutputHandler {
     
-        public Action<BigInteger[]> OutputHandler { get; set; }
+        public Action<IEnumerable<BigInteger>> OutputHandler { get; set; }
 
         public Func<int> InputHandler { get; set; } 
 
-        public void Write(BigInteger[] results)
+        public void Write(IEnumerable<BigInteger> results)
         {
             OutputHandler(results);
         }

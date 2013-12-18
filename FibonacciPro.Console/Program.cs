@@ -1,9 +1,10 @@
-﻿using FibonacciPro.ConsoleApplication.IO;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
+
+using FibonacciPro.ConsoleApplication.IO;
 
 namespace FibonacciPro.ConsoleApplication
 {
@@ -18,7 +19,12 @@ namespace FibonacciPro.ConsoleApplication
             try
             {
                 var inputHandler = GetInputHandler();
-                var result = FibonacciCalculator.Calculate(inputHandler.GetNumber());
+                var calculator = new FibonacciCalculator();
+                var number = inputHandler.GetNumber();
+
+                var result = _options.UseGenerator 
+                                ? calculator.CalculateEnumerable(number)
+                                : calculator.Calculate(number);
 
                 var outputHandler = GetOutputHandler();
                 outputHandler.Write(result);
@@ -27,9 +33,10 @@ namespace FibonacciPro.ConsoleApplication
             catch (ArgumentException ex) { Console.Error.Write(ex.Message); Environment.Exit(CommandLine.Parser.DefaultExitCodeFail); }
         }
 
-        private static Options ParseOptions(string[] args) {
+        private static Options ParseOptions(string[] args)
+        {
             var options = new Options();
-            
+
             CommandLine.Parser.Default.ParseArgumentsStrict(args, options);
 
             if (options.InputNumber <= 0 && string.IsNullOrWhiteSpace(options.InputFile) && !options.UseInteractiveMode())
@@ -62,7 +69,7 @@ namespace FibonacciPro.ConsoleApplication
                 case Options.FileType.Xml:
                     return new XmlIOHandler(_options.InputFile);
             }
-            
+
 
         }
 

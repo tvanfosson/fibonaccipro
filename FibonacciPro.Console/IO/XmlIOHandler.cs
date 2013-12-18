@@ -50,7 +50,7 @@ namespace FibonacciPro.ConsoleApplication.IO
             }
         }
 
-        public void Write(BigInteger[] results)
+        public void Write(IEnumerable<BigInteger> results)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace FibonacciPro.ConsoleApplication.IO
                 using (var fileStream = new FileStream(_path, FileMode.Create))
                 using (var xmlWriter = new XmlTextWriter(fileStream, Encoding.Unicode))
                 {
-                    System.Xml.Serialization.XmlSerializer serializer = new XmlSerializer(typeof(OutputFormat));
+                    var serializer = new XmlSerializer(typeof(OutputFormat));
                     serializer.Serialize(xmlWriter, resultsObject);
                 }
 
