@@ -23,7 +23,7 @@ namespace FibonacciPro.ConsoleApplication
                 var number = inputHandler.GetNumber();
 
                 var result = _options.UseGenerator 
-                                ? calculator.CalculateEnumerable(number)
+                                ? calculator.CalculateEnumerable().Take(number)
                                 : calculator.Calculate(number);
 
                 var outputHandler = GetOutputHandler();

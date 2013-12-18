@@ -44,28 +44,17 @@ namespace FibonacciPro.ConsoleApplication
         /// <summary>
         /// Computes the first n digits of the fibonacci sequence as an enumeration of BigInteger
         /// </summary>
-        /// <param name="n">number of digits of the fibonacci sequence to compute</param>
-        /// <returns>an array containing the first n numbers in the fibonacci sequence</returns>
-        public IEnumerable<BigInteger> CalculateEnumerable(int n)
+        /// <returns>the numerbs of the fibonacci sequence</returns>
+        public IEnumerable<BigInteger> CalculateEnumerable()
         {
-            if (n <= 0)
-            {
-                throw new ArgumentException();
-            }
+            BigInteger penultimate;
+            BigInteger previous;
 
-            var penultimate = BigInteger.Zero;
-            var previous = BigInteger.Zero;
-            if (n >= 1)
-            {
-                yield return (previous = BigInteger.Zero);
-            }
+            yield return (previous = BigInteger.Zero);
 
-            if (n >= 2)
-            {
-                yield return (penultimate = BigInteger.One);
-            }
+            yield return (penultimate = BigInteger.One);
 
-            for (var i = 2; i < n; ++i)
+            while (true)
             {
                 var current = previous + penultimate;
 
