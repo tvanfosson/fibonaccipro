@@ -1,26 +1,29 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using CommandLine;
 using CommandLine.Text;
 
 namespace FibonacciPro.ConsoleApplication
 {
     /// <summary>
-    /// Options to be passed into the application from the command line
+    ///     Options to be passed into the application from the command line
     /// </summary>
-    class Options
+    public class Options
     {
         /// <summary>
-        /// User indicated flag for Interactive Mode
+        ///     User indicated flag for Interactive Mode
         /// </summary>
         /// <remarks>
-        /// Use the UseInteractiveMode() function to test whether or not to use interactive mode.
-        /// Special execptions may override this flag, such as ambiguity between flag and an input file.
+        ///     Use the UseInteractiveMode() function to test whether or not to use interactive mode.
+        ///     Special execptions may override this flag, such as ambiguity between flag and an input file.
         /// </remarks>
         [Option('t', "interactive", HelpText = "Enables interactive mode where the user will be prompted for input values.")]
         public bool InteractiveMode { get; set; }
 
         /// <summary>
-        /// Handles special exceptions to override Interactive mode argument.
+        ///     Handles special exceptions to override Interactive mode argument.
         /// </summary>
         /// <returns></returns>
         public bool UseInteractiveMode()
@@ -34,7 +37,12 @@ namespace FibonacciPro.ConsoleApplication
         [Option('i', "input-file", HelpText = "File path to input file. XML or plain text accepted.")]
         public string InputFile { get; set; }
 
-        public enum FileType { Undefined, PlainText, Xml }
+        public enum FileType
+        {
+            Undefined,
+            PlainText,
+            Xml
+        }
 
         [Option('o', "output-file", HelpText = "File path to output file. Files ending in .xml will be an XML format.")]
         public string OutputFile { get; set; }
@@ -49,10 +57,12 @@ namespace FibonacciPro.ConsoleApplication
             get { return GetFileTypeFromPath(InputFile); }
         }
 
-        private FileType GetFileTypeFromPath(string path)
+        private static FileType GetFileTypeFromPath(string path)
         {
             if (string.IsNullOrWhiteSpace(path) || !path.Contains('.'))
+            {
                 return FileType.Undefined;
+            }
 
             var extension = path.Substring(path.LastIndexOf('.'));
 
@@ -72,7 +82,7 @@ namespace FibonacciPro.ConsoleApplication
         public int InputNumber { get; set; }
 
         /// <summary>
-        /// User indicated flag as to whether the generator method or an array of values should be computed.
+        ///     User indicated flag as to whether the generator method or an array of values should be computed.
         /// </summary>
         [Option('g', "generator", HelpText = "Use generator method to produce the sequence.")]
         public bool UseGenerator { get; set; }

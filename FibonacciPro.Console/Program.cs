@@ -1,95 +1,111 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
+
+using Fibonacci.Lib.Calculators;
+using Fibonacci.Lib.IO;
 
 using FibonacciPro.ConsoleApplication.IO;
 
 namespace FibonacciPro.ConsoleApplication
 {
-    class Program
+    // ReSharper disable once ClassNeverInstantiated.Global
+    public class Program
     {
-        private static Options _options;
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            _options = ParseOptions(args);
-
             try
             {
-                var inputHandler = GetInputHandler();
-                var calculator = new FibonacciCalculator();
-                var number = inputHandler.GetNumber();
+                var options = ParseOptions(args);
+                var inputHandler = GetInputHandler(options);
+                var calculator = GetCalculator(options);
+                var outputHandler = GetOutputHandler(options);
 
-                var result = _options.UseGenerator 
-                                ? calculator.CalculateEnumerable().Take(number)
-                                : calculator.Calculate(number);
-
-                var outputHandler = GetOutputHandler();
-                outputHandler.Write(result);
+                CalculateAndWriteResults(inputHandler, outputHandler, calculator);
             }
-            catch (ApplicationException ex) { Console.Error.Write(ex.Message); Environment.Exit(CommandLine.Parser.DefaultExitCodeFail); }
-            catch (ArgumentException ex) { Console.Error.Write(ex.Message); Environment.Exit(CommandLine.Parser.DefaultExitCodeFail); }
+            catch (ApplicationException ex)
+            {
+                Console.Error.Write(ex.Message);
+                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.Error.Write(ex.Message);
+                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
+            }
         }
 
-        private static Options ParseOptions(string[] args)
+        public static void CalculateAndWriteResults(IInputHandler inputHandler, IOutputHandler outputHandler, IFibonacciCalculator calculator)
+        {
+            var number = inputHandler.GetNumber();
+            var result = calculator.Calculate(number);
+            outputHandler.Write(result);
+        }
+
+        public static Options ParseOptions(string[] args)
         {
             var options = new Options();
 
             CommandLine.Parser.Default.ParseArgumentsStrict(args, options);
 
-            if (options.InputNumber <= 0 && string.IsNullOrWhiteSpace(options.InputFile) && !options.UseInteractiveMode())
+            if (options.InputNumber > 0 || !string.IsNullOrWhiteSpace(options.InputFile) || options.UseInteractiveMode())
             {
-                Console.Error.Write(CommandLine.Text.HelpText.AutoBuild(options));
-                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
+                return options;
             }
-
-            return options;
+            Console.Error.Write(CommandLine.Text.HelpText.AutoBuild(options));
+            throw new ArgumentException("Invalid paramater set", "args");
         }
 
-        private static IInputHandler GetInputHandler()
+        public static IInputHandler GetInputHandler(Options options)
         {
-            if (_options.UseInteractiveMode())
+            if (options.UseInteractiveMode())
             {
                 return new ConsoleIOHandler();
             }
 
-            if (_options.InputNumber > 0)
+            if (options.InputNumber > 0)
             {
-                return new GenericIOHandler() { InputHandler = () => _options.InputNumber };
+                return new GenericIOHandler { InputHandler = () => options.InputNumber };
             }
 
-            switch (_options.InputFileType)
+            switch (options.InputFileType)
             {
                 default:
                 case Options.FileType.Undefined:
                 case Options.FileType.PlainText:
-                    return new TextFileIOHandler(_options.InputFile);
+                    return new TextFileIOHandler(options.InputFile);
                 case Options.FileType.Xml:
-                    return new XmlIOHandler(_options.InputFile);
+                    return new XmlIOHandler(options.InputFile);
             }
-
-
         }
 
-        private static IOutputHandler GetOutputHandler()
+        public static IOutputHandler GetOutputHandler(Options options)
         {
             IOutputHandler result = new ConsoleIOHandler();
 
-            if (!string.IsNullOrWhiteSpace(_options.OutputFile))
+            if (string.IsNullOrWhiteSpace(options.OutputFile))
             {
-                switch (_options.OutputFileType)
-                {
-                    default:
-                    case Options.FileType.PlainText:
-                        return new TextFileIOHandler(_options.OutputFile);
-                    case Options.FileType.Xml:
-                        return new XmlIOHandler(_options.OutputFile);
-                }
+                return result;
             }
 
-            return result;
+            switch (options.OutputFileType)
+            {
+                default:
+                case Options.FileType.PlainText:
+                    return new TextFileIOHandler(options.OutputFile);
+                case Options.FileType.Xml:
+                    return new XmlIOHandler(options.OutputFile);
+            }
+        }
+
+        public static IFibonacciCalculator GetCalculator(Options options)
+        {
+            if (options.UseGenerator)
+            {
+                return new GeneratorCalculator();
+            }
+
+            return new ArrayCalculator();
         }
     }
 }

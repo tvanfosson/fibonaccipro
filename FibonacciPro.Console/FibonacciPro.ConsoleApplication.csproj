@@ -45,13 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FibonacciCalculator.cs" />
     <Compile Include="IO\ConsoleIOHandler.cs" />
-    <Compile Include="IO\GenericIOHandler.cs" />
-    <Compile Include="IO\IInputHandler.cs" />
-    <Compile Include="IO\IOutputHandler.cs" />
-    <Compile Include="IO\TextFileIOHandler.cs" />
-    <Compile Include="IO\XmlIOHandler.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,6 +53,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Fibonacci.Lib\Fibonacci.Lib.csproj">
+      <Project>{55b7f15f-3d03-4bb1-a7e4-47055edbccc3}</Project>
+      <Name>Fibonacci.Lib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
